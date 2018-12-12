@@ -12,4 +12,5 @@
         <item name="android:statusBarColor">@color/background_material_light</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
     </style>
+    
 </resources>
