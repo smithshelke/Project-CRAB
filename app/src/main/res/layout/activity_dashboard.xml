@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".DashboardActivity">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbarlayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/appbarlayout"
-        >
+        app:elevation="0dp">
+
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/appbar"
             android:layout_width="match_parent"
@@ -20,36 +22,37 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="CRAB"
-                android:textColor="@color/colorText"
                 android:layout_marginEnd="16dp"
-                android:letterSpacing=".3"
                 android:fontFamily="@font/googlesans_bold"
+                android:gravity="center"
+                android:letterSpacing=".3"
+                android:text="CRAB"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
-                android:gravity="center"/>
+                android:textColor="@color/colorText" />
 
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
 
-    <include layout="@layout/activity_dashboard_content"/>
+    <include layout="@layout/activity_dashboard_content" />
 
 
-    <com.google.android.material.bottomappbar.BottomAppBar
-        android:id="@+id/bottombar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        app:backgroundTint="@color/colorAccent2"
-        app:fabCradleMargin="12dp"/>
+    <!--<com.google.android.material.bottomappbar.BottomAppBar-->
+        <!--android:id="@+id/bottombar"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="bottom"-->
+        <!--android:visibility="gone"-->
+        <!--app:backgroundTint="@color/colorAccent2"-->
+        <!--app:fabCradleMargin="12dp" />-->
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
+    <!--<com.google.android.material.floatingactionbutton.FloatingActionButton-->
+        <!--android:id="@+id/fab"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:visibility="gone"-->
+        <!--app:layout_anchor="@id/bottombar"-->
 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_anchor="@id/bottombar"
+        <!--/>-->
 
-        />
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</LinearLayout>

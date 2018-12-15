@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.text.InputType;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.DatePicker;
 import android.widget.EditText;
 
@@ -21,7 +22,8 @@ import java.util.Date;
 import java.util.Locale;
 
 public class DashboardActivity extends AppCompatActivity {
-    Calendar myCalendar;
+    private Calendar myCalendar;
+    private MyCustomSearchEditText customSearchEditText;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -29,13 +31,14 @@ public class DashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
         Toolbar appbar = findViewById(R.id.appbar);
-        FloatingActionButton fab  = findViewById(R.id.fab);
+        //FloatingActionButton fab  = findViewById(R.id.fab);
         EditText date = findViewById(R.id.date);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+        customSearchEditText = findViewById(R.id.customSearch);
         date.setInputType(InputType.TYPE_NULL);
         myCalendar = Calendar.getInstance();
 
         DatePickerDialog.OnDateSetListener datePicker = new DatePickerDialog.OnDateSetListener() {
-
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear,
                                   int dayOfMonth) {
@@ -61,6 +64,7 @@ public class DashboardActivity extends AppCompatActivity {
 
         // appbar.setLogo(R.drawable.googleg_disabled_color_18);
     }
+
     private String updateLabel() {
         String myFormat = "dd MMMM yyyy"; //In which you need put here
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
