@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorTextDark"
+    android:orientation="vertical"
+    tools:context=".DashboardActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbarlayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        app:elevation="0dp">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/appbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorTextDark"
+            app:navigationIcon="@drawable/ic_dehaze_black_24dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="56dp"
+                android:fontFamily="@font/googlesans_bold"
+                android:gravity="center"
+                android:letterSpacing=".3"
+                android:text="CRAB"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+                android:textColor="@android:color/white" />
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ViewStub
+        android:id="@+id/backdrop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout="@layout/activity_dashboard_content_2" />
+
+
+    <FrameLayout
+
+        android:id="@+id/frame_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/main_rounded_outline">
+
+        <ListView
+            android:id="@+id/frame_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="56dp" />
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="@drawable/main_rounded_outline"
+            app:liftOnScroll="true">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="16dp"
+                android:fontFamily="@font/googlesans_medium"
+                android:gravity="center_vertical"
+                android:text="Explore cabs by destination"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                android:textColor="@color/colorText" />
+        </com.google.android.material.appbar.AppBarLayout>
+
+
+    </FrameLayout>
+</LinearLayout>
