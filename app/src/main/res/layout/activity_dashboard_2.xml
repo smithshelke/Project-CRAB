@@ -12,7 +12,6 @@
         android:id="@+id/appbarlayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         app:elevation="0dp">
 
         <androidx.appcompat.widget.Toolbar
@@ -20,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/colorTextDark"
-            app:navigationIcon="@drawable/ic_dehaze_black_24dp">
+            app:navigationIcon="@drawable/ic_close_black_24dp">
 
             <TextView
                 android:layout_width="match_parent"
@@ -38,19 +37,18 @@
     <ViewStub
         android:id="@+id/backdrop"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout="@layout/activity_dashboard_content_2" />
 
 
     <FrameLayout
-
         android:id="@+id/frame_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/main_rounded_outline">
 
-        <ListView
-            android:id="@+id/frame_list"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/frame_recycler"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="56dp" />

@@ -1,7 +1,11 @@
 package com.example.smith.project_crab;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.transition.AutoTransition;
 import androidx.transition.ChangeBounds;
 import androidx.transition.Fade;
@@ -14,59 +18,102 @@ import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.InputType;
+import android.transition.Explode;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
+import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.AccelerateInterpolator;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.view.animation.AnimationUtils;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.LayoutAnimationController;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ListView;
-import android.widget.ScrollView;
+import android.widget.LinearLayout;
 
 import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.textfield.TextInputLayout;
+import com.squareup.leakcanary.LeakCanary;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 public class DashboardActivity extends AppCompatActivity {
+
+    private static final String TAG = "DashboardActivity";
+
     private Calendar myCalendar;
-    private MyCustomSearchEditText customSearchEditText;
+    private MyCustomSearchEditText customSearchEditText, customSearchEditText2;
     private EditText date;
     private Toolbar appbar;
     private DatePickerDialog.OnDateSetListener datePicker;
     private FrameLayout container;
-    private boolean isExpanded = false;
-    private static final String TAG = "DashboardActivity";
+    private boolean isExpanded = true;
     private ViewGroup backdrop;
     private AppBarLayout header;
+    private RecyclerView recyclerView;
+    private LinearLayoutManager layoutManager;
+    private TextInputLayout dateLayout;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_dashboard);
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return;
+        }
+        LeakCanary.install(getApplication());
+        Log.d(TAG, "onCreate: has been called");
+        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         setContentView(R.layout.activity_dashboard_2);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
-        //initViews();
         initDashboard2();
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume: called");
+        staggerAnimateBackdrop();
+    }
+
+    public void staggerAnimateBackdrop(){
+        Log.d(TAG, "staggerAnimateBackdrop: Stagger animating backdrop");
+        Transition transition = new TransitionSet()
+                .addTransition(new AutoTransition())
+                .addTransition(new ChangeBounds()
+                        .setInterpolator(new DecelerateInterpolator(0))
+                        .setDuration(500));
+        TransitionManager.beginDelayedTransition(container, transition);
+        backdrop.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(getApplicationContext(), R.anim.layout_animations);
+        backdrop.setLayoutAnimation(animation);
+    }
+
+    public void expandBackdropToMatchParent(){
+        Log.d(TAG, "expandBackdropToMatchParent: Expanding backdrop to match parent ...");
+        backdrop.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause: called");
+        expandBackdropToMatchParent();
+    }
+
     private void initDashboard2() {
-        MyOutlineProvider frameOutlineProvider = new MyOutlineProvider(24,getResources(),false);
-        MyOutlineProvider headerOutlineProvider = new MyOutlineProvider(24,getResources(),true);
+        Log.d(TAG, "initDashboard2: Initialising dashboard views...");
+        MyOutlineProvider frameOutlineProvider = new MyOutlineProvider(24, getResources(), false);
+        MyOutlineProvider headerOutlineProvider = new MyOutlineProvider(24, getResources(), true);
         appbar = findViewById(R.id.appbar);
         container = findViewById(R.id.frame_container);
         header = findViewById(R.id.header);
@@ -75,36 +122,43 @@ public class DashboardActivity extends AppCompatActivity {
         container.setOutlineProvider(frameOutlineProvider);
         container.setClipToOutline(true);
         container.invalidateOutline();
+        Log.d(TAG, "initDashboard2: Initialising appbar, container and containerHeader complete");
         ViewStub stub = findViewById(R.id.backdrop);
         stub.setOnInflateListener(new ViewStub.OnInflateListener() {
             @Override
             public void onInflate(ViewStub stub, View inflated) {
-                initViews();
+                Log.d(TAG, "onInflate: Backdrop inflated");
+                initBackdropViews();
             }
         });
         backdrop = (ViewGroup) stub.inflate();
-        backdrop.setVisibility(View.GONE);
-        stub.setVisibility(View.GONE);
         appbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                /*
+                * If stagger reveal for back drop is required
+                * LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(getApplicationContext(), R.anim.layout_animations);
+                *backdrop.setLayoutAnimation(animation);
+                * */
                 Transition transition = new TransitionSet()
                         .addTransition(new Fade()
-                            .setDuration(500));
+                                .setDuration(500));
                 Transition transition1 = new TransitionSet()
                         .addTransition(new AutoTransition()
-                            .addTarget(container))
+                                .addTarget(container))
+                        .setDuration(200)
                         .addTransition(new ChangeBounds()
-                            .setDuration(600));
-                TransitionManager.beginDelayedTransition(backdrop,transition);
-                TransitionManager.beginDelayedTransition(container,transition1);
-                if(!isExpanded) {
+                                .setDuration(100));
+                TransitionManager.beginDelayedTransition(backdrop, transition);
+                TransitionManager.beginDelayedTransition(container, transition1);
+                if (!isExpanded) {
+                    Log.d(TAG, "onClick: Expanding backdrop");
                     appbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
                     backdrop.setVisibility(View.VISIBLE);
                     stub.setVisibility(View.VISIBLE);
                     isExpanded = true;
-                }
-                else{
+                } else {
+                    Log.d(TAG, "onClick: Closing backdrop");
                     appbar.setNavigationIcon(R.drawable.ic_dehaze_black_24dp);
                     backdrop.setVisibility(View.GONE);
                     stub.setVisibility(View.GONE);
@@ -114,46 +168,58 @@ public class DashboardActivity extends AppCompatActivity {
 
             }
         });
-        initListView();
+        //initListView();
+        initRecyclerView();
     }
 
-    private void initListView(){
-        ListView simpleList = findViewById(R.id.frame_list);
-        List<String> list = new ArrayList<>();
+    private void initRecyclerView() {
+        recyclerView = findViewById(R.id.frame_recycler);
+        layoutManager = new LinearLayoutManager(this);
+        ArrayList<String> list = new ArrayList<>();
         list.add("Smith");
         list.add("Smith");
         list.add("Smith");
-        list.add("Smith");list.add("Smith");
-        list.add("Smith");list.add("Smith");list.add("Smith");list.add("Smith");list.add("Smith");list.add("Smith");list.add("Smith");list.add("Smith");list.add("Smith");
-        list.add("Smith");list.add("Smith");list.add("Smith");list.add("Smith");
-        simpleList.setOnScrollListener(new AbsListView.OnScrollListener() {
+        list.add("Smith");
+        list.add("Smith");
+        list.add("Smith");
+        list.add("Smith");
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, layoutManager.getOrientation()));
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
             }
 
             @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                if(firstVisibleItem != 0){
-                    header.setLifted(true);
-                }
-                else {
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (layoutManager.findFirstCompletelyVisibleItemPosition() == 0) {
                     header.setLifted(false);
+
+                } else {
+                    header.setLifted(true);
                 }
             }
         });
-
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list);
-        simpleList.setAdapter(arrayAdapter);
+        MainRecyclerAdapter adapter = new MainRecyclerAdapter(this, list);
+        recyclerView.setAdapter(adapter);
 
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private void initViews() {
+    private void initBackdropViews() {
+        Log.d(TAG, "initBackdropViews: Initialising backdrop views ...");
         appbar = findViewById(R.id.appbar);
+        dateLayout = findViewById(R.id.dateInputLayout);
         date = findViewById(R.id.date);
+        customSearchEditText2 = findViewById(R.id.customSearch2);
+        customSearchEditText2.getEditText().setHint("From");
+        customSearchEditText2.getEditText().getEditText().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_place_black_24dp, 0, R.drawable.places_ic_clear, 0);
         customSearchEditText = findViewById(R.id.customSearch);
         date.setInputType(InputType.TYPE_NULL);
+        Log.d(TAG, "initBackdropViews: Initialising backdrop views complete");
         myCalendar = Calendar.getInstance();
         datePicker = new DatePickerDialog.OnDateSetListener() {
             @Override

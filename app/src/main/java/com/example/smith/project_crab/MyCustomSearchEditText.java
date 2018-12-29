@@ -31,12 +31,15 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.transition.ChangeBounds;
 import androidx.transition.ChangeTransform;
 import androidx.transition.Fade;
@@ -61,12 +64,13 @@ public class MyCustomSearchEditText extends FrameLayout {
     private static final LatLngBounds BOUNDS_INDIA = new LatLngBounds(new LatLng(23.63936, 68.14712), new LatLng(28.20453, 97.34466));
     private GeoDataClient mGeoDataClient;
     private PlaceDetectionClient mPlaceDetectionClient;
-    private ListView simpleList;
+    private RecyclerView recyclerView;
 
     public String getText() {
         return editText.getText().toString();
     }
 
+    public TextInputLayout getEditText() { return  findViewById(R.id.inputLayout) ;}
 
     public MyCustomSearchEditText(Context context) {
         super(context);
@@ -120,7 +124,7 @@ public class MyCustomSearchEditText extends FrameLayout {
     private void init(Context context) {
         inflate(context, R.layout.custom_edittext, this);
         editText = findViewById(R.id.edit_text);
-        simpleList = (ListView) findViewById(R.id.list);
+        recyclerView = findViewById(R.id.list);
         fl = findViewById(R.id.frame);
         layoutParamss = fl.getLayoutParams();
         mGeoDataClient = Places.getGeoDataClient(context);
@@ -143,6 +147,7 @@ public class MyCustomSearchEditText extends FrameLayout {
                 }
                 if (event.getRawX() >= (editText.getRight() - editText.getCompoundDrawables()[2].getBounds().width())) {
                     editText.setText("");
+                    editText.requestFocus();
                     return true;
                 }
                 return false;
@@ -175,16 +180,35 @@ public class MyCustomSearchEditText extends FrameLayout {
                 results.addOnCompleteListener(new OnCompleteListener<AutocompletePredictionBufferResponse>() {
                     @Override
                     public void onComplete(@NonNull Task<AutocompletePredictionBufferResponse> task) {
-                        AutocompletePredictionBufferResponse dataBuffer = task.getResult();
-                        if (task.getResult() != null)
-                            list.clear();
-                        Log.d("Key", "onComplete:###################### ");
-                        for (AutocompletePrediction place : task.getResult()) {
-                            Log.d("Result", "onComplete: " + place.getPrimaryText(null));
-                            list.add(place.getFullText(null).toString());
+                        try {
+                            AutocompletePredictionBufferResponse dataBuffer = task.getResult();
+                            if (task.getResult() != null)
+                                list.clear();
+                            Log.d("Key", "onComplete:###################### ");
+                            SearchRecyclerAdapter searchRecyclerAdapter = new SearchRecyclerAdapter(context,dataBuffer);
+//                        for (AutocompletePrediction place : task.getResult()) {
+//                            Log.d("Result", "onComplete: " + place.getPrimaryText(null));
+//                            list.add(place.getPrimaryText(null).toString());
+//                        }
+                            searchRecyclerAdapter.setItemClickListener(new SearchRecyclerAdapter.OnItemClickListener() {
+                                @Override
+                                public void onClick(String primaryText) {
+                                    editText.setText(primaryText);
+                                    hideUsingValueAnimator();
+                                    editText.clearFocus();
+                                    dataBuffer.release();
+                                }
+                            });
+                            recyclerView.setHasFixedSize(true);
+                            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+                            recyclerView.setAdapter(searchRecyclerAdapter);
+                        }catch (Exception e){
+                            e.printStackTrace();
                         }
-                        dataBuffer.release();
-                        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, list);
+
+                        //dataBuffer.release();
+
+                        /*ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, list);
                         simpleList.setDivider(null);
                         simpleList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                             @Override
@@ -193,7 +217,7 @@ public class MyCustomSearchEditText extends FrameLayout {
                                 hideUsingValueAnimator();
                             }
                         });
-                        simpleList.setAdapter(arrayAdapter);
+                        simpleList.setAdapter(arrayAdapter);*/
                     }
                 });
             }

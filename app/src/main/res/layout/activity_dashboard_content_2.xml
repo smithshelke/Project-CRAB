@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:orientation="vertical">
@@ -18,8 +18,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <com.example.smith.project_crab.MyCustomSearchEditText
+        android:id="@+id/customSearch2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout"
+        android:id="@+id/dateInputLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -27,9 +39,11 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
-        app:boxBackgroundColor="#eee"
+        app:boxBackgroundColor="@color/colorText"
+        android:textColorHint="#ddd"
         android:focusable="false"
         android:hint="Date"
+        android:theme="@style/CustomLayoutTheme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/customSearch">
@@ -40,10 +54,13 @@
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/ic_date_range_black_24dp"
             android:drawablePadding="8dp"
-            android:drawableTint="@color/colorTextDark"
+            android:textColor="@android:color/white"
+            android:drawableTint="@android:color/white"
             android:fontFamily="@font/googlesans_medium" />
 
     </com.google.android.material.textfield.TextInputLayout>
+
+
 
 
 </LinearLayout>

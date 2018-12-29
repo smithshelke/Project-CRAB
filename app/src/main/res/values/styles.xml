@@ -6,11 +6,14 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-
+        <item name="android:statusBarColor">@color/colorTextDark</item>
         <item name="android:navigationBarColor">@color/background_material_light</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
-        <item name="android:statusBarColor">@color/background_material_light</item>
-        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+    </style>
+
+    <style name="CustomLayoutTheme" parent="ThemeOverlay.MaterialComponents.TextInputEditText.FilledBox.Dense">
+        <item name="colorControlActivated">@android:color/white</item>
+        <item name="colorControlNormal">@color/colorText</item>
     </style>
     
 </resources>
